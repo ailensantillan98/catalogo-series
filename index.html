@@ -73,7 +73,68 @@ body.guest-mode .ghost{
   align-items:center;
   gap:7px;
 }
+.editor-modal{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(45,25,40,.35);
+  backdrop-filter:blur(5px);
+  padding:24px;
+}
 
+.editor-modal-card{
+  width:min(420px,100%);
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:32px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(80,30,60,.18);
+}
+
+.editor-modal-icon{
+  font-size:44px;
+  margin-bottom:10px;
+}
+
+.editor-modal-card h3{
+  margin:0;
+  font-size:25px;
+}
+
+.editor-modal-card p{
+  margin:8px 0 22px;
+  color:var(--muted);
+}
+
+.editor-password{
+  width:100%;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font:inherit;
+  box-sizing:border-box;
+  margin-bottom:14px;
+}
+
+.editor-modal-buttons{
+  display:flex;
+  gap:10px;
+}
+
+.editor-modal-buttons button{
+  flex:1;
+}
+
+.editor-error{
+  display:none;
+  color:#d94b72;
+  font-size:14px;
+  margin:-4px 0 12px;
+}
 .access-option:hover{
   transform:translateY(-3px);
   box-shadow:0 10px 25px rgba(80,30,60,.10);
@@ -130,6 +191,39 @@ button{border:0;border-radius:12px;padding:10px 14px;cursor:pointer}.primary{bac
         <small>Administrar mi catálogo</small>
       </button>
     </div>
+  </div>
+</div>
+  <div id="editorModal" class="editor-modal">
+  <div class="editor-modal-card">
+
+    <div class="editor-modal-icon">🔐</div>
+
+    <h3>Acceso de editor</h3>
+
+    <p>Ingresá tu clave para administrar el catálogo.</p>
+
+    <input
+      id="editorPassword"
+      class="editor-password"
+      type="password"
+      placeholder="Clave de edición"
+      autocomplete="off"
+    >
+
+    <div id="editorError" class="editor-error">
+      ⚠️ Clave incorrecta
+    </div>
+
+    <div class="editor-modal-buttons">
+      <button class="soft" onclick="closeEditorLogin()">
+        Cancelar
+      </button>
+
+      <button class="primary" onclick="confirmEditorLogin()">
+        Ingresar
+      </button>
+    </div>
+
   </div>
 </div>
 <header>
@@ -202,11 +296,28 @@ function norm(v){return String(v??"").toLowerCase().normalize("NFD").replace(/[\
 }
 
 function openEditorLogin(){
-  const token=prompt("Ingresá tu clave de edición:");
-  if(!token)return;
+  document.getElementById("editorModal").style.display="flex";
+  document.getElementById("editorPassword").value="";
+  document.getElementById("editorError").style.display="none";
+  setTimeout(()=>document.getElementById("editorPassword").focus(),100);
+}
+
+function closeEditorLogin(){
+  document.getElementById("editorModal").style.display="none";
+}
+
+function confirmEditorLogin(){
+  const token=document.getElementById("editorPassword").value.trim();
+
+  if(!token){
+    document.getElementById("editorError").textContent="⚠️ Ingresá una clave.";
+    document.getElementById("editorError").style.display="block";
+    return;
+  }
 
   sessionStorage.setItem("editToken",token);
   document.body.classList.remove("guest-mode");
+  document.getElementById("editorModal").style.display="none";
   document.getElementById("accessScreen").style.display="none";
 }
   function openLogin(){
