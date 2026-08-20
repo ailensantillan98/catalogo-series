@@ -213,10 +213,11 @@ async function saveSeries(e){
       "https://script.google.com/macros/s/AKfycbxPt0-GOJhuF6dXp1RcaxGe5zVOMs6sE2ouj1sg5x1xR0Z_T5HJc3DEO98RlZendVwa-g/exec",
       {
         method: "POST",
-        body: JSON.stringify({
-          action: id ? "update" : "add",
-          data: obj
-        })
+       body: JSON.stringify({
+  action: id ? "update" : "add",
+  data: obj,
+  token: sessionStorage.getItem("editToken")
+})
       }
     );
 
@@ -263,9 +264,10 @@ async function deleteSeries(id){
       {
         method:"POST",
         body:JSON.stringify({
-          action:"delete",
-          data:{ID:x.ID}
-        })
+  action:"delete",
+  data:{ID:x.ID},
+  token:sessionStorage.getItem("editToken")
+})
       }
     );
 
