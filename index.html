@@ -150,12 +150,77 @@ function openForm(item=null){
   document.getElementById("fNotes").value=item?.Notas||"";
 }
 function closeForm(){document.getElementById("modal").classList.remove("open");}
-function saveSeries(e){
+async function saveSeries(e){
   e.preventDefault();
-  const id=document.getElementById("editId").value;
-  const obj={ID:id?Number(id):Math.max(0,...data.map(x=>Number(x.ID)||0))+1,Título:document.getElementById("fTitle").value.trim(),Puntuación:document.getElementById("fScore").value===""?"":Number(document.getElementById("fScore").value),Estado:document.getElementById("fStatus").value,Tipo:document.getElementById("fType").value,Favorita:document.getElementById("fFav").checked,Año:document.getElementById("fYear").value.trim(),Notas:document.getElementById("fNotes").value.trim(),"Nota original":document.getElementById("fNotes").value.trim()};
-  if(id){const i=data.findIndex(x=>Number(x.ID)===Number(id));if(i>=0)data[i]=obj;}else data.push(obj);
-  saveLocal(); closeForm(); render();
+
+  const id = document.getElementById("editId").value;
+
+  const obj = {
+    ID: id
+      ? Number(id)
+      : Math.max(0, ...data.map(x => Number(x.ID) || 0)) + 1,
+
+    Título: document.getElementById("fTitle").value.trim(),
+
+    Puntuación: document.getElementById("fScore").value === ""
+      ? ""
+      : Number(document.getElementById("fScore").value),
+
+    Estado: document.getElementById("fStatus").value,
+
+    Tipo: document.getElementById("fType").value,
+
+    Favorita: document.getElementById("fFav").checked,
+
+    Año: document.getElementById("fYear").value.trim(),
+
+    Notas: document.getElementById("fNotes").value.trim(),
+
+    "Nota original": document.getElementById("fNotes").value.trim()
+  };
+
+  try {
+
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbxPt0-GOJhuF6dXp1RcaxGe5zVOMs6sE2ouj1sg5x1xR0Z_T5HJc3DEO98RlZendVwa-g/exec",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          action: id ? "update" : "add",
+          data: obj
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("No se pudo conectar con Google Sheets.");
+    }
+
+    if (id) {
+      const i = data.findIndex(x => Number(x.ID) === Number(id));
+      if (i >= 0) data[i] = obj;
+    } else {
+      data.push(obj);
+    }
+
+    saveLocal();
+    closeForm();
+    render();
+
+    alert(id
+      ? "Serie actualizada correctamente."
+      : "Serie agregada correctamente."
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "No se pudo guardar en Google Sheets. " +
+      "Los cambios no fueron enviados."
+    );
+  }
 }
 function editSeries(id){const x=data.find(x=>Number(x.ID)===Number(id));if(x)openForm(x);}
 function deleteSeries(id){const x=data.find(x=>Number(x.ID)===Number(id));if(x&&confirm(`¿Eliminar "${x.Título}"?`)){data=data.filter(y=>Number(y.ID)!==Number(id));saveLocal();render();}}
