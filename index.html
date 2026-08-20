@@ -306,7 +306,7 @@ function closeEditorLogin(){
   document.getElementById("editorModal").style.display="none";
 }
 
-function confirmEditorLogin(){
+async function confirmEditorLogin(){
   const token=document.getElementById("editorPassword").value.trim();
 
   if(!token){
@@ -315,10 +315,34 @@ function confirmEditorLogin(){
     return;
   }
 
-  sessionStorage.setItem("editToken",token);
-  document.body.classList.remove("guest-mode");
-  document.getElementById("editorModal").style.display="none";
-  document.getElementById("accessScreen").style.display="none";
+  try{
+    const response=await fetch(API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({
+        action:"auth",
+        token:token
+      })
+    });
+
+    const result=await response.json();
+
+    if(!result.ok){
+      document.getElementById("editorError").textContent="⚠️ La clave ingresada no es correcta.";
+      document.getElementById("editorError").style.display="block";
+      return;
+    }
+
+    sessionStorage.setItem("editToken",token);
+    document.body.classList.remove("guest-mode");
+    document.getElementById("editorModal").style.display="none";
+    document.getElementById("accessScreen").style.display="none";
+
+  }catch(error){
+    console.error(error);
+    document.getElementById("editorError").textContent="⚠️ No se pudo verificar la clave.";
+    document.getElementById("editorError").style.display="block";
+  }
 }
   function openLogin(){
   const token=prompt("Ingresá tu clave de edición:");
