@@ -190,6 +190,61 @@ button{border:0;border-radius:12px;padding:10px 14px;cursor:pointer}.primary{bac
   transform:translateY(-4px);
   box-shadow:0 14px 34px rgba(120,60,90,.12);
   border-color:#e9b8ca;
+  .card-top{
+  display:flex;
+  align-items:flex-start;
+  padding-right:45px;
+  min-height:48px;
+}
+
+.card .title{
+  font-size:21px;
+  font-weight:800;
+  line-height:1.2;
+  color:var(--ink);
+  letter-spacing:-.2px;
+}
+
+.card .stars{
+  margin-top:12px;
+  font-size:24px;
+  letter-spacing:2px;
+}
+
+.card .meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:14px;
+}
+
+.card .pill{
+  background:var(--pink2);
+  color:var(--ink);
+  border:1px solid transparent;
+  border-radius:999px;
+  padding:7px 11px;
+  font-size:14px;
+}
+
+.card .note{
+  margin-top:15px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.45;
+  min-height:40px;
+}
+
+.card .actions{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.card .actions button{
+  flex:1;
+  min-height:42px;
+}
 }.rank{position:absolute;right:14px;top:12px;font-weight:800;color:#c68a25}.title{font-weight:800;font-size:18px;padding-right:35px}.stars{color:var(--gold);letter-spacing:1px;margin:7px 0}.meta{display:flex;gap:6px;flex-wrap:wrap}.pill{font-size:12px;background:#f8eef2;border-radius:999px;padding:5px 8px}.note{font-size:13px;color:var(--muted);margin:10px 0;line-height:1.35}.actions{display:flex;gap:7px;margin-top:12px}.actions button{flex:1;padding:8px}
 .empty{padding:45px;text-align:center;color:var(--muted)}
 .modal{position:fixed;inset:0;background:#2f202855;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}.modal.open{display:flex}.modalbox{background:#fff;border-radius:22px;max-width:620px;width:100%;padding:20px;max-height:92vh;overflow:auto}.modalhead{display:flex;justify-content:space-between;align-items:center}.modalgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.check{display:flex;align-items:center;gap:8px}.check input{width:auto}.footer{margin-top:22px;color:var(--muted);font-size:12px;text-align:center}
@@ -442,7 +497,36 @@ function render(){
   stats();
 }
 function card(x,rank){
-  return `<article class="card">${rank?`<div class="rank">#${rank}</div>`:""}<div class="title">${esc(x.Título)} ${x.Favorita===true||String(x.Favorita).toLowerCase()==="true"?"💗":""}</div><div class="stars">${stars(x.Puntuación)}</div><div class="meta"><span class="pill">${esc(x.Estado||"Sin especificar")}</span><span class="pill">${esc(x.Tipo||"Serie")}</span>${x.Año?`<span class="pill">${esc(x.Año)}</span>`:""}</div>${x.Notas?`<div class="note">${esc(x.Notas)}</div>`:""}<div class="actions"><button class="soft" onclick="editSeries(${x.ID})">✏️ Editar</button><button class="danger" onclick="deleteSeries(${x.ID})">🗑️</button></div></article>`;
+  function card(x,rank){
+  return `
+    <article class="card">
+      ${rank?`<div class="rank">#${rank}</div>`:""}
+
+      <div class="card-top">
+        <div class="title">
+          ${esc(x.Título)}
+          ${x.Favorita===true||String(x.Favorita).toLowerCase()==="true"?"💗":""}
+        </div>
+      </div>
+
+      <div class="stars">
+        ${stars(x.Puntuación)}
+      </div>
+
+      <div class="meta">
+        <span class="pill">${esc(x.Estado||"Sin especificar")}</span>
+        <span class="pill">${esc(x.Tipo||"Serie")}</span>
+        ${x.Año?`<span class="pill">${esc(x.Año)}</span>`:""}
+      </div>
+
+      ${x.Notas?`<div class="note">${esc(x.Notas)}</div>`:""}
+
+      <div class="actions">
+        <button class="soft" onclick="editSeries(${x.ID})">✏️ Editar</button>
+        <button class="danger" onclick="deleteSeries(${x.ID})">🗑️</button>
+      </div>
+    </article>
+  `;
 }
 function stats(){
   const total=data.length,p=data.filter(x=>x.Puntuación!==""&&x.Puntuación!==null),avg=p.length?(p.reduce((a,x)=>a+Number(x.Puntuación),0)/p.length).toFixed(1):"—";
