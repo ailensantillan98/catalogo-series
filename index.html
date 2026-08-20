@@ -86,6 +86,13 @@ function loadData(){try{const x=localStorage.getItem(STORAGE_KEY);return x?JSON.
 function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
 function stars(n){return n?("⭐".repeat(Number(n))+"☆".repeat(5-Number(n))):"Sin puntuar";}
 function norm(v){return String(v??"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
+  function openLogin(){
+  const token=prompt("Ingresá tu clave de edición:");
+  if(!token)return;
+
+  sessionStorage.setItem("editToken",token);
+  alert("Modo edición activado.");
+}
 async function setup(){
   const s=document.getElementById("status"),t=document.getElementById("type");
   statuses.forEach(v=>s.insertAdjacentHTML("beforeend",`<option>${v}</option>`));
