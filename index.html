@@ -497,7 +497,6 @@ function render(){
   stats();
 }
 function card(x,rank){
-  function card(x,rank){
   return `
     <article class="card">
       ${rank?`<div class="rank">#${rank}</div>`:""}
@@ -519,7 +518,7 @@ function card(x,rank){
         ${x.Año?`<span class="pill">${esc(x.Año)}</span>`:""}
       </div>
 
-      ${x.Notas?`<div class="note">${esc(x.Notas)}</div>`:""}
+      ${x.Notas?`<div class="note">${esc(x.Notas)}`:""}
 
       <div class="actions">
         <button class="soft" onclick="editSeries(${x.ID})">✏️ Editar</button>
