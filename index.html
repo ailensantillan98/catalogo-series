@@ -47,6 +47,7 @@ button{border:0;border-radius:12px;padding:10px 14px;cursor:pointer}.primary{bac
     <button class="primary" onclick="openForm()">＋ Agregar serie</button>
     <button class="soft" onclick="syncFromGoogle()">🔄 Actualizar</button><button class="soft" onclick="exportData()">⬇️ Exportar datos</button>
     <label class="ghost" style="padding:10px 14px;border-radius:12px;cursor:pointer">⬆️ Importar datos<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+  <button class="ghost" onclick="openLogin()">🔐 Modo edición</button>
   </div>
   <div class="grid" id="grid"></div>
   <div class="footer">Los datos actuales están incorporados en este archivo. La conexión con Google Sheets se puede activar después mediante Apps Script.</div>
