@@ -89,7 +89,7 @@ async function setup(){
   const s=document.getElementById("status"),t=document.getElementById("type");
   statuses.forEach(v=>s.insertAdjacentHTML("beforeend",`<option>${v}</option>`));
   types.forEach(v=>t.insertAdjacentHTML("beforeend",`<option>${v}</option>`));
-  document.querySelectorAll("#search,#score,#status,#type,#fav").forEach(el=>el.addEventListener("input",render));
+  document.querySelectorAll("#search,#score,#status,#type").forEach(el=>el.addEventListener("input",render));
   renderTabs();
   render();
   await syncFromGoogle();
@@ -122,7 +122,7 @@ function renderTabs(){
   document.getElementById("tabs").innerHTML=tabs.map(([id,label])=>`<button class="tab ${activeTab===id?"active":""}" onclick="activeTab='${id}';renderTabs();render()">${label}</button>`).join("");
 }
 function render(){
-  const q=norm(document.getElementById("search").value), score=document.getElementById("score").value, status=document.getElementById("status").value, type=document.getElementById("type").value, fav=document.getElementById("fav").value;
+  const q=norm(document.getElementById("search").value), score=document.getElementById("score").value, status=document.getElementById("status").value, type=document.getElementById("type").value;
   let arr=[...data];
   if(activeTab==="ranking") arr=arr.filter(x=>x.Puntuación!==""&&x.Puntuación!==null).sort((a,b)=>(Number(b.Puntuación)-Number(a.Puntuación))||(b.Favorita?1:0)-(a.Favorita?1:0)||Number(a.ID)-Number(b.ID));
   else if(activeTab==="fav") arr=arr.filter(x=>x.Favorita===true||String(x.Favorita).toLowerCase()==="true");
@@ -130,7 +130,7 @@ function render(){
   else if(activeTab!=="all") arr=arr.filter(x=>norm(x.Estado)===norm(activeTab));
   arr=arr.filter(x=>{
     const hay=norm([x.Título,x.Estado,x.Tipo,x.Notas,""+x["Nota original"]].join(" "));
-    return (!q||hay.includes(q))&&(!score||(score==="none"?(x.Puntuación===""||x.Puntuación===null):String(x.Puntuación)===score))&&(!status||x.Estado===status)&&(!type||x.Tipo===type)&&(!fav||(fav==="yes"?x.Favorita===true||String(x.Favorita).toLowerCase()==="true":!(x.Favorita===true||String(x.Favorita).toLowerCase()==="true")));
+    return (!q||hay.includes(q))&&(!score||(score==="none"?(x.Puntuación===""||x.Puntuación===null):String(x.Puntuación)===score))&&(!status||x.Estado===status)&&(!type||x.Tipo===type);
   });
   document.getElementById("grid").innerHTML=arr.length?arr.map((x,i)=>card(x,activeTab==="ranking"?i+1:null)).join(""):`<div class="empty">No hay series que coincidan con los filtros.</div>`;
   stats();
