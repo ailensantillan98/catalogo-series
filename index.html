@@ -8,7 +8,95 @@
 :root{--bg:#fff6fa;--card:#fff;--ink:#352a31;--muted:#8d7b85;--pink:#e58aaa;--pink2:#f7d7e3;--line:#f0dbe3;--gold:#f2bd4b;--danger:#c85b70}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fff3f8 0,#fffafc 45%,#fff 100%);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 header{padding:34px 18px 20px;text-align:center}h1{margin:0;font-size:32px}header p{margin:8px 0;color:var(--muted)}
-.wrap{max-width:1200px;margin:auto;padding:0 16px 40px}
+.access-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#fff3f8,#fffafd);
+  padding:24px;
+}
+  body.guest-mode .actions{
+  display:none;
+}
+
+body.guest-mode .primary{
+  display:none;
+}
+
+body.guest-mode .ghost{
+  display:none;
+}
+
+.access-card{
+  width:min(520px,100%);
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:42px 34px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(80,30,60,.12);
+}
+
+.access-icon{
+  font-size:56px;
+  margin-bottom:12px;
+}
+
+.access-card h2{
+  margin:0;
+  font-size:30px;
+}
+
+.access-card p{
+  margin:10px 0 28px;
+  color:var(--muted);
+}
+
+.access-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.access-option{
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:#fff;
+  padding:22px 14px;
+  cursor:pointer;
+  transition:.2s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
+}
+
+.access-option:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(80,30,60,.10);
+}
+
+.access-option span{
+  font-size:32px;
+}
+
+.access-option strong{
+  font-size:18px;
+}
+
+.access-option small{
+  color:var(--muted);
+}
+
+@media(max-width:600px){
+  .access-options{
+    grid-template-columns:1fr;
+  }
+}
+  .wrap{max-width:1200px;margin:auto;padding:0 16px 40px}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}.tab{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:999px;cursor:pointer;color:var(--ink)}.tab.active{background:var(--pink2);border-color:#efbdd0;font-weight:700}
 .toolbar{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;grid-template-columns:1.7fr repeat(4,1fr);gap:10px;box-shadow:0 8px 30px #e8cbd622}
 input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px;color:var(--ink)}textarea{min-height:80px;resize:vertical}
@@ -22,6 +110,28 @@ button{border:0;border-radius:12px;padding:10px 14px;cursor:pointer}.primary{bac
 </style>
 </head>
 <body>
+  <div id="accessScreen" class="access-screen">
+  <div class="access-card">
+    <div class="access-icon">🎬</div>
+
+    <h2>Mi catálogo de series</h2>
+    <p>¿Cómo querés ingresar?</p>
+
+    <div class="access-options">
+      <button class="access-option" onclick="enterGuest()">
+        <span>👀</span>
+        <strong>Invitado</strong>
+        <small>Explorar el catálogo</small>
+      </button>
+
+      <button class="access-option" onclick="openEditorLogin()">
+        <span>🔐</span>
+        <strong>Editor</strong>
+        <small>Administrar mi catálogo</small>
+      </button>
+    </div>
+  </div>
+</div>
 <header>
   <h1>📺 Mi catálogo de series</h1>
   <p>Mi ranking personal · ⭐ puntuaciones · 💗 favoritas</p>
@@ -86,6 +196,19 @@ function loadData(){try{const x=localStorage.getItem(STORAGE_KEY);return x?JSON.
 function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
 function stars(n){return n?("⭐".repeat(Number(n))+"☆".repeat(5-Number(n))):"Sin puntuar";}
 function norm(v){return String(v??"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
+  function enterGuest(){
+  document.body.classList.add("guest-mode");
+  document.getElementById("accessScreen").style.display="none";
+}
+
+function openEditorLogin(){
+  const token=prompt("Ingresá tu clave de edición:");
+  if(!token)return;
+
+  sessionStorage.setItem("editToken",token);
+  document.body.classList.remove("guest-mode");
+  document.getElementById("accessScreen").style.display="none";
+}
   function openLogin(){
   const token=prompt("Ingresá tu clave de edición:");
   if(!token)return;
